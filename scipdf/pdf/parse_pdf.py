@@ -88,6 +88,7 @@ def parse_pdf(
             ("teiCoordinates", (None, "ref")),
             ("teiCoordinates", (None, "formula")),
             ("teiCoordinates", (None, "biblStruct")),
+            ("teiCoordinates", (None, "p")),
         ]
 
     if isinstance(pdf_path, str):
