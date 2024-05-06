@@ -89,6 +89,10 @@ def parse_pdf(
             ("teiCoordinates", (None, "formula")),
             ("teiCoordinates", (None, "biblStruct")),
             ("teiCoordinates", (None, "p")),
+            ("teiCoordinates", (None, "s")),
+            ("teiCoordinates", (None, "title")),
+            ("teiCoordinates", (None, "affiliation")),
+            ("teiCoordinates", (None, "note")),
         ]
 
     if isinstance(pdf_path, str):
@@ -186,6 +190,7 @@ def parse_sections(article, as_list: bool = False):
     article_text = article.find("text")
     divs = article_text.find_all("div", attrs={"xmlns": "http://www.tei-c.org/ns/1.0"})
     sections = []
+    coordinates = []
     for div in divs:
         div_list = list(div.children)
         if len(div_list) == 0:
@@ -210,6 +215,10 @@ def parse_sections(article, as_list: bool = False):
             for p in p_all:
                 if p is not None:
                     try:
+                        text_coordinates = p.attrs.get("coords") or ""
+                        if text_coordinates:
+                            for box in filter(lambda c: len(c) > 0 and c[0] != "", text_coordinates['coords'].split(";")):
+                                coordinates.append([float(x) for x in box.split(",")])
                         text.append(p.text)
                     except:
                         pass
@@ -222,6 +231,7 @@ def parse_sections(article, as_list: bool = False):
                 {
                     "heading": heading,
                     "text": text,
+                    "coords": coordinates,
                     "publication_ref": ref_dict["publication_ref"],
                     "figure_ref": ref_dict["figure_ref"],
                     "table_ref": ref_dict["table_ref"],
