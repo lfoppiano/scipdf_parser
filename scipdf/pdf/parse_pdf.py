@@ -1,17 +1,12 @@
-import re
 import os
 import os.path as op
-from glob import glob
-import urllib
-from typing import Dict 
+import re
 import subprocess
-import requests
-import fitz
-from PIL import Image
-import io
-from bs4 import BeautifulSoup, NavigableString
-from tqdm import tqdm, tqdm_notebook
+import urllib
+from glob import glob
 
+import requests
+from bs4 import BeautifulSoup, NavigableString
 
 GROBID_URL = "http://localhost:8070"
 DIR_PATH = op.dirname(op.abspath(__file__))
@@ -217,8 +212,7 @@ def parse_sections(article, as_list: bool = False):
                     try:
                         text_coordinates = p.attrs.get("coords") or ""
                         if text_coordinates:
-                            for box in filter(lambda c: len(c) > 0 and c[0] != "", text_coordinates['coords'].split(";")):
-                                coordinates.append([float(x) for x in box.split(",")])
+                            coordinates.extend([[float(x) for x in box.split(",")] for box in text_coordinates.split(";")])
                         text.append(p.text)
                     except:
                         pass
